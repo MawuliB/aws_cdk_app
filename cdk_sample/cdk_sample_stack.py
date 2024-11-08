@@ -7,6 +7,8 @@ from aws_cdk import (
     aws_sns as sns,
     aws_sns_subscriptions as subs,
 )
+import aws_cdk.aws_s3 as s3
+import aws_cdk as cdk
 
 
 class CdkSampleStack(Stack):
@@ -14,13 +16,8 @@ class CdkSampleStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        queue = sqs.Queue(
-            self, "CdkSampleQueue",
-            visibility_timeout=Duration.seconds(300),
+        bucket = s3.Bucket(self, "MyFirstBucket",
+            versioned=True,
+            auto_delete_objects=True,
+            removal_policy=cdk.RemovalPolicy.DESTROY
         )
-
-        topic = sns.Topic(
-            self, "CdkSampleTopic"
-        )
-
-        topic.add_subscription(subs.SqsSubscription(queue))
